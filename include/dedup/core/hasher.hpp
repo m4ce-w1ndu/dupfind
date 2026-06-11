@@ -6,8 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace dedup
-{
+namespace dedup {
 
 /**
  * @class FileHasher
@@ -67,7 +66,7 @@ private:
 
     /// In-memory cache mapping file paths to their raw 32-byte SHA-256 hashes.
     std::unordered_map<std::string, std::array<uint8_t, 32>> cache_;
- 
+
     /// In-memory cache mapping file paths to their raw 32-byte partial SHA-256 hashes.
     std::unordered_map<std::string, std::array<uint8_t, 32>> partial_cache_;
 

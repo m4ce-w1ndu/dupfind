@@ -8,8 +8,7 @@
 #include <filesystem>
 #include <cassert>
 
-namespace dedup
-{
+namespace dedup {
 
     /**
      * @brief Represents metadata and hash information for a scanned file.
