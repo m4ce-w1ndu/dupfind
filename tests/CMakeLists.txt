@@ -14,13 +14,29 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
+add_library(test_fixtures STATIC
+    test_fixtures.cpp
+)
+
+target_include_directories(test_fixtures PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/lib/include
+)
+
 add_executable(dupfind_tests
+    test_main.cpp
     test_placeholder.cpp
 )
 
 target_link_libraries(dupfind_tests PRIVATE
     gtest_main
     dedup
+    test_fixtures
+)
+
+target_include_directories(dupfind_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/lib/include
 )
 
 # GoogleTest includes GTest::gtest and GTest::gtest_main, and CMake also exposes GTest::gtest / GTest::gtest_main when FindGTest is used.
