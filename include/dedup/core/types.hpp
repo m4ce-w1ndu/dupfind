@@ -151,6 +151,18 @@ namespace dedup {
         }
 
         /**
+         * @brief Checks if the group contains only a single file (no duplicates).
+         * @return True if there is exactly one file, false otherwise.
+         */
+        bool is_single() const { return files.size() == 1; }
+
+        /**
+         * @brief Checks if the group contains any duplicate files.
+         * @return True if there are two or more files, false otherwise.
+         */
+        bool has_duplicates() const { return files.size() > 1; }
+
+        /**
          * @brief Returns a short human-readable summary of the duplicate group.
          * @return A string summary.
          */
