@@ -15,7 +15,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_library(test_fixtures STATIC
-    test_fixtures.cpp
+    utils/test_fixtures.cpp
 )
 
 target_include_directories(test_fixtures PUBLIC
