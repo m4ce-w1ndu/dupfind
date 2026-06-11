@@ -19,6 +19,7 @@ FileHasher::FileHasher(size_t partial_size_bytes)
 void FileHasher::clear_cache()
 {
     cache_.clear();
+    partial_cache_.clear();
 }
 
 std::string FileHasher::to_hex_string(const std::array<uint8_t, 32>& hash)
@@ -80,63 +81,74 @@ bool FileHasher::are_identical(const std::string& path_a, const std::string& pat
 std::array<uint8_t, 32> FileHasher::compute_raw_hash(const std::string& filepath, bool full)
 {
     // Check caching settings
-    if (full && caching_enabled_) {
-        auto it = cache_.find(filepath);
-        if (it != cache_.end())
-            return it->second;
+    if (caching_enabled_) {
+        if (full) {
+            auto it = cache_.find(filepath);
+            if (it != cache_.end())
+                return it->second;
+        } else {
+            auto it = partial_cache_.find(filepath);
+            if (it != partial_cache_.end())
+                return it->second;
+        }
     }
- 
+
     // Open the file
     std::ifstream file(filepath, std::ios::binary);
     if (!file.is_open())
         throw std::runtime_error("Cannot open file: " + filepath);
- 
+
     // Initialize SHA-256 by creating EVP context
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
     if (!ctx)
         throw std::runtime_error("Failed to create EVP context");
- 
+
     if (EVP_DigestInit_ex(ctx, EVP_sha256(), nullptr) != 1) {
         EVP_MD_CTX_free(ctx);
         throw std::runtime_error("Failed to initialize SHA-256");
     }
- 
+
     const size_t BUFFER_SIZE = 65536;
     std::vector<char> buffer(BUFFER_SIZE);
- 
+
     size_t bytes_read_total = 0;
     size_t bytes_to_read = full ? SIZE_MAX : partial_size_;
- 
+
     while (bytes_read_total < bytes_to_read) {
         size_t remaining = bytes_to_read - bytes_read_total;
         size_t chunk_size = std::min(BUFFER_SIZE, remaining);
- 
+
         file.read(buffer.data(), chunk_size);
         std::streamsize actual = file.gcount();
- 
+
         if (actual == 0) break;
- 
+
         if (EVP_DigestUpdate(ctx, buffer.data(), actual) != 1) {
             EVP_MD_CTX_free(ctx);
             throw std::runtime_error("Failed to update hash");
         }
- 
+
         bytes_read_total += static_cast<size_t>(actual);
     }
- 
+
     std::array<uint8_t, 32> hash;
     unsigned int hash_len;
- 
+
     if (EVP_DigestFinal_ex(ctx, hash.data(), &hash_len) != 1) {
         EVP_MD_CTX_free(ctx);
         throw std::runtime_error("Failed to finalize hash");
     }
- 
+
     EVP_MD_CTX_free(ctx);
- 
-    if (full && caching_enabled_)
-        cache_[filepath] = hash;
- 
+
+    if (caching_enabled_) {
+        if (full) {
+            cache_[filepath] = hash;
+        } else {
+            partial_cache_[filepath] = hash;
+        }
+    }
+
     return hash;
 }
 
