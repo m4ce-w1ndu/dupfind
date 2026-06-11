@@ -49,6 +49,34 @@ std::vector<uint8_t> FileHasher::read_chunk(const std::string& path, size_t offs
     return buffer;
 }
 
+std::string FileHasher::compute_partial_hash(const std::string& path)
+{
+    return to_hex_string(compute_raw_hash(path, false));
+}
+
+std::string FileHasher::compute_full_hash(const std::string& path)
+{
+    return to_hex_string(compute_raw_hash(path, true));
+}
+
+bool FileHasher::are_identical(const std::string& path_a, const std::string& path_b)
+{
+    if (path_a == path_b) return true;
+
+    std::ifstream file_a(path_a, std::ios::binary | std::ios::ate);
+    std::ifstream file_b(path_b, std::ios::binary | std::ios::ate);
+
+    if (!file_a.is_open() || !file_b.is_open()) return false;
+    if (file_a.tellg() != file_b.tellg()) return false;
+
+    auto chunk_a = read_chunk(path_a, 0, 4096);
+    auto chunk_b = read_chunk(path_b, 0, 4096);
+    if (chunk_a != chunk_b) return false;
+    if (chunk_a.size() < 4096) return true;
+
+    return compute_full_hash(path_a) == compute_full_hash(path_b);
+}
+
 std::array<uint8_t, 32> FileHasher::compute_raw_hash(const std::string& filepath, bool full)
 {
     // Check caching settings
