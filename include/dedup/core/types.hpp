@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <vector>
 #include <stdexcept>
+#include <filesystem>
+#include <cassert>
 
 namespace dedup {
 
@@ -15,15 +17,16 @@ namespace dedup {
         std::string path;
         uint64_t size_bytes;
         std::string hash;
-        uint64_t last_modified;
+        std::filesystem::file_time_type last_modified;
 
         /**
          * @brief Constructs a new FileInfo object.
          * @param path The path to the file.
          * @param size_bytes The size of the file in bytes.
+         * @param last_modified The last modification time of the file.
          */
-        FileInfo(std::string path, uint64_t size_bytes)
-            : path(std::move(path)), size_bytes(size_bytes), hash(""), last_modified(0) {}
+        FileInfo(std::string path, uint64_t size_bytes, std::filesystem::file_time_type last_modified)
+            : path(std::move(path)), size_bytes(size_bytes), hash(""), last_modified(last_modified) {}
     };
 
     /**
@@ -34,6 +37,14 @@ namespace dedup {
          * @brief The list of files in the duplicate group.
          */
         std::vector<FileInfo> files;
+
+        /**
+         * @brief Constructs a new DuplicateGroup object.
+         * @param f A collection of files suspected or confirmed to be identical.
+         */
+        DuplicateGroup(std::vector<FileInfo> f) : files(std::move(f)) {
+            assert(is_valid() && "DuplicateGroup created with mismatched files");
+        }
 
         /**
          * @brief Validates the duplicate group by checking if all files have the same size and hash.
