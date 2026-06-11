@@ -98,6 +98,12 @@ private:
     void create_small_file(const std::filesystem::path& path);
 
     /**
+     * @brief Helper to create a medium text file.
+     * @param path Destination file path.
+     */
+    void create_medium_file(const std::filesystem::path& path);
+
+    /**
      * @brief Helper to create a large test file.
      * @param path Destination file path.
      */
