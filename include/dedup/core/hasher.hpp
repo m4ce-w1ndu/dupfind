@@ -6,7 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
-namespace dedup {
+namespace dedup
+{
 
 /**
  * @class FileHasher
