@@ -25,7 +25,7 @@ public:
 
     /**
      * @brief Initializes the test fixtures.
-     * 
+     *
      * Creates the temporary directory and generates all test files (empty, small,
      * large, duplicate, and binary files) if they have not been initialized yet.
      */
@@ -114,6 +114,12 @@ private:
      * @param path Destination file path.
      */
     void create_binary_file(const std::filesystem::path& path);
+
+    /**
+     * @brief Traverses the fixture directory to populate the fixtures registry map.
+     * @param root The root directory containing the generated test files.
+     */
+    void populate_metadata(const std::filesystem::path& root);
 
     /// The base directory path for temporary test fixtures.
     std::filesystem::path root_dir_;
