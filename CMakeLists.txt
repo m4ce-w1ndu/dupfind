@@ -33,3 +33,10 @@ install(TARGETS dedup dedup-cli
     ARCHIVE DESTINATION lib
 )
 install(DIRECTORY include/ DESTINATION include)
+
+# Testing
+include(CTest)
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
+
