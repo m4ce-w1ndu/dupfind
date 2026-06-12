@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iterator>
 #include <string>
 #include <cstdint>
 #include <vector>
@@ -18,6 +19,18 @@ namespace dedup {
         uint64_t size_bytes;
         std::string hash;
         std::filesystem::file_time_type last_modified;
+
+        /**
+         * @brief Constructs a new FileInfo object.
+         * @param path The path to the file.
+         * @param size_bytes The size of the file in bytes.
+         */
+        FileInfo(std::string path, uint64_t size_bytes)
+            : path(std::move(path)), size_bytes(size_bytes), hash("")
+        {
+            const auto& f_path = std::filesystem::path(path);
+            last_modified = std::filesystem::last_write_time(f_path);
+        }
 
         /**
          * @brief Constructs a new FileInfo object.
