@@ -26,6 +26,7 @@ target_include_directories(test_fixtures PUBLIC
 add_executable(dupfind_tests
     test_main.cpp
     test_types.cpp
+    test_hasher.cpp
 )
 
 target_link_libraries(dupfind_tests PRIVATE
