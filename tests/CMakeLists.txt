@@ -36,7 +36,7 @@ target_link_libraries(dupfind_tests PRIVATE
 
 target_include_directories(dupfind_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/lib/include
+    ${CMAKE_SOURCE_DIR}/include
 )
 
 # GoogleTest includes GTest::gtest and GTest::gtest_main, and CMake also exposes GTest::gtest / GTest::gtest_main when FindGTest is used.
